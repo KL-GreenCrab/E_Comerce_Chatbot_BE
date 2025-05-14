@@ -42,22 +42,34 @@ router.get('/orders', auth, admin, async (req, res) => {
     }
 });
 
-// Cập nhật trạng thái đơn hàng
+// Lấy chi tiết đơn hàng theo ID
+router.get('/orders/:id', auth, admin, async (req, res) => {
+    try {
+        const order = await Order.findById(req.params.id).populate('userId', 'name email');
+        if (!order) {
+            return res.status(404).json({ message: 'Order not found' });
+        }
+        res.json(order);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching order details', error: error.message });
+    }
+});
+
+// Cập nhật trạng thái hoặc chỉnh sửa thông tin đơn hàng
 router.put('/orders/:id', auth, admin, async (req, res) => {
     try {
-        const { status } = req.body;
         const order = await Order.findById(req.params.id);
-
         if (!order) {
             return res.status(404).json({ message: 'Order not found' });
         }
 
-        order.status = status;
+        // Cập nhật thông tin từ `req.body`
+        Object.assign(order, req.body);
         await order.save();
 
         res.json(order);
     } catch (error) {
-        res.status(500).json({ message: 'Error updating order status' });
+        res.status(500).json({ message: 'Error updating order', error: error.message });
     }
 });
 
@@ -96,19 +108,4 @@ router.post('/add-product', auth, admin, async (req, res) => {
     }
 });
 
-// Admin chỉnh sửa thông tin đơn hàng
-router.put('/orders/:id', auth, admin, async (req, res) => {
-    try {
-        const order = await Order.findById(req.params.id);
-        if (!order) {
-            return res.status(404).json({ message: 'Order not found' });
-        }
-        Object.assign(order, req.body);
-        await order.save();
-        res.json(order);
-    } catch (error) {
-        res.status(500).json({ message: 'Error updating order', error: error.message });
-    }
-});
-
-module.exports = router; 
+module.exports = router;
