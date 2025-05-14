@@ -7,12 +7,79 @@ const Order = require('../models/Order');
 // Lấy thống kê dashboard
 router.get('/stats', auth, admin, async (req, res) => {
     try {
+        // Tính tổng số sản phẩm
         const totalProducts = await Product.countDocuments();
+
+        // Tính tổng số đơn hàng
         const totalOrders = await Order.countDocuments();
 
-        // Tính tổng doanh thu
-        const orders = await Order.find({ status: 'completed' });
-        const totalRevenue = orders.reduce((sum, order) => sum + order.total, 0);
+        // Tính số đơn hàng theo trạng thái
+        const pendingOrders = await Order.countDocuments({ status: 'pending' });
+        const processingOrders = await Order.countDocuments({ status: 'processing' });
+        const completedOrders = await Order.countDocuments({ status: 'completed' });
+        const cancelledOrders = await Order.countDocuments({ status: 'cancelled' });
+
+        // Tính tỷ lệ hoàn thành đơn hàng
+        const orderCompletionRate = totalOrders > 0 ? parseFloat((completedOrders / totalOrders * 100).toFixed(2)) : 0;
+
+        // Tính tổng doanh thu từ đơn hàng đã hoàn thành
+        const completedOrdersData = await Order.find({ status: 'completed' });
+        const totalRevenue = completedOrdersData.reduce((sum, order) => sum + order.total, 0);
+
+        // Tính tổng số sản phẩm đã bán
+        const totalProductsSold = completedOrdersData.reduce((sum, order) => {
+            return sum + order.items.reduce((itemSum, item) => itemSum + item.quantity, 0);
+        }, 0);
+
+        // Tính doanh thu trung bình trên mỗi đơn hàng
+        const averageOrderValue = completedOrders > 0 ? parseFloat((totalRevenue / completedOrders).toFixed(2)) : 0;
+
+        // Tính doanh thu theo thời gian (7 ngày gần đây)
+        const last7Days = new Date();
+        last7Days.setDate(last7Days.getDate() - 7);
+
+        const revenueByDay = await Order.aggregate([
+            {
+                $match: {
+                    status: 'completed',
+                    createdAt: { $gte: last7Days }
+                }
+            },
+            {
+                $group: {
+                    _id: {
+                        year: { $year: "$createdAt" },
+                        month: { $month: "$createdAt" },
+                        day: { $dayOfMonth: "$createdAt" }
+                    },
+                    revenue: { $sum: "$total" },
+                    count: { $sum: 1 }
+                }
+            },
+            { $sort: { "_id.year": 1, "_id.month": 1, "_id.day": 1 } }
+        ]);
+
+        // Tìm sản phẩm bán chạy nhất
+        const productSales = {};
+        completedOrdersData.forEach(order => {
+            order.items.forEach(item => {
+                if (!productSales[item.productId]) {
+                    productSales[item.productId] = {
+                        id: item.productId,
+                        name: item.name,
+                        image: item.image,
+                        quantity: 0,
+                        revenue: 0
+                    };
+                }
+                productSales[item.productId].quantity += item.quantity;
+                productSales[item.productId].revenue += item.price * item.quantity;
+            });
+        });
+
+        const topSellingProducts = Object.values(productSales)
+            .sort((a, b) => b.quantity - a.quantity)
+            .slice(0, 5);
 
         // Lấy đơn hàng gần đây
         const recentOrders = await Order.find()
@@ -23,7 +90,18 @@ router.get('/stats', auth, admin, async (req, res) => {
         res.json({
             totalProducts,
             totalOrders,
+            ordersByStatus: {
+                pending: pendingOrders,
+                processing: processingOrders,
+                completed: completedOrders,
+                cancelled: cancelledOrders
+            },
+            orderCompletionRate,
             totalRevenue,
+            totalProductsSold,
+            averageOrderValue,
+            revenueByDay,
+            topSellingProducts,
             recentOrders
         });
     } catch (error) {

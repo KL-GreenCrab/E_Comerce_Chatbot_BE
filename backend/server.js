@@ -16,8 +16,9 @@ const app = express();
 // Middleware
 app.use(cors({
   origin: '*', // Cho phép tất cả các nguồn trong môi trường phát triển
-  methods: ['GET', 'POST'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
 }));
 app.use(express.json());
 
