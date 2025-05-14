@@ -3,7 +3,7 @@ const router = express.Router();
 const Order = require('../models/Order');
 const Cart = require('../models/Cart');
 const mongoose = require('mongoose');
-const auth = require('../middleware/auth');
+const { auth } = require('../middleware/auth');
 
 // Tạo đơn hàng mới
 router.post('/', auth, async (req, res) => {
@@ -65,7 +65,7 @@ router.post('/', auth, async (req, res) => {
 
         res.status(201).json(order);
     } catch (error) {
-        console.error('Error creating order:', error, req.body);
+        console.error('Error creating order:', error);
         res.status(500).json({ message: 'Error creating order', error: error.message });
     }
 });

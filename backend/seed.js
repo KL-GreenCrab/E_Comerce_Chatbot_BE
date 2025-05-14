@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Product = require('./models/Product');
+const User = require('./models/User');
 const config = require('./config');
 
 const products = [
@@ -514,13 +515,38 @@ const products = [
   // Bạn có thể thêm nhiều sản phẩm khác vào đây nếu muốn
 ];
 
-mongoose.connect(config.MONGODB_URI)
-  .then(async () => {
+// Admin account
+const adminUser = {
+  name: 'Admin',
+  email: 'admin@123',
+  password: 'tulun203',
+  role: 'admin'
+};
+
+async function seed() {
+  try {
+    await mongoose.connect(config.MONGODB_URI);
+    console.log('Connected to MongoDB');
+
+    // Create admin user if not exists
+    const existingAdmin = await User.findOne({ email: adminUser.email });
+    if (!existingAdmin) {
+      await User.create(adminUser);
+      console.log('Admin user created successfully');
+    } else {
+      console.log('Admin user already exists');
+    }
+
     await Product.deleteMany({});
     await Product.insertMany(products);
     console.log('Đã seed lại dữ liệu sản phẩm!');
     mongoose.disconnect();
-  })
-  .catch(err => {
-    console.error('Lỗi khi seed:', err);
-  }); 
+    console.log('Seeding completed');
+    process.exit(0);
+  } catch (error) {
+    console.error('Error seeding database:', error);
+    process.exit(1);
+  }
+}
+
+seed(); 

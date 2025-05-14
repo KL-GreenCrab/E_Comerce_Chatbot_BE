@@ -1,21 +1,20 @@
 const jwt = require('jsonwebtoken');
 const config = require('../config');
 
-const auth = async (req, res, next) => {
+exports.auth = (req, res, next) => {
     try {
-        const token = req.header('Authorization')?.replace('Bearer ', '');
-
-        if (!token) {
-            return res.status(401).json({ message: 'Không tìm thấy token xác thực' });
-        }
-
+        const token = req.header('Authorization').replace('Bearer ', '');
         const decoded = jwt.verify(token, config.jwtSecret);
-        req.user = { _id: decoded.userId };
+        req.user = decoded;
         next();
     } catch (error) {
-        console.error('Auth error:', error);
-        res.status(401).json({ message: 'Token không hợp lệ' });
+        res.status(401).json({ message: 'Please authenticate' });
     }
 };
 
-module.exports = auth; 
+exports.admin = (req, res, next) => {
+    if (req.user.role !== 'admin') {
+        return res.status(403).json({ message: 'Access denied' });
+    }
+    next();
+}; 

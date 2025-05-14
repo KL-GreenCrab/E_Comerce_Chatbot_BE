@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const Product = require('../models/Product');
+const { auth, admin } = require('../middleware/auth');
 
 // Get all products with filtering
 router.get('/', async (req, res) => {
@@ -65,7 +66,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // Create new product
-router.post('/', async (req, res) => {
+router.post('/', auth, admin, async (req, res) => {
     const product = new Product({
         name: req.body.name,
         description: req.body.description,
@@ -84,7 +85,7 @@ router.post('/', async (req, res) => {
 });
 
 // Update product
-router.put('/:id', async (req, res) => {
+router.put('/:id', auth, admin, async (req, res) => {
     try {
         const product = await Product.findById(new mongoose.Types.ObjectId(req.params.id));
         if (!product) {
@@ -100,7 +101,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // Delete product
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', auth, admin, async (req, res) => {
     try {
         const product = await Product.findById(new mongoose.Types.ObjectId(req.params.id));
         if (!product) {

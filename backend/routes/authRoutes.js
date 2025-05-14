@@ -29,9 +29,19 @@ router.post('/login', async (req, res) => {
         if (!user || !(await user.comparePassword(password))) {
             return res.status(400).json({ message: 'Invalid credentials' });
         }
-        // Tạo JWT token
-        const token = jwt.sign({ userId: user._id }, config.jwtSecret, { expiresIn: '7d' });
-        res.json({ token, user: { _id: user._id, email: user.email, name: user.name, phone: user.phone, address: user.address } });
+        // Tạo JWT token có cả role
+        const token = jwt.sign({ userId: user._id, role: user.role || 'user' }, config.jwtSecret, { expiresIn: '7d' });
+        res.json({
+            token,
+            user: {
+                _id: user._id,
+                email: user.email,
+                name: user.name,
+                phone: user.phone,
+                address: user.address,
+                role: user.role || 'user'
+            }
+        });
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
