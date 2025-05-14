@@ -21,7 +21,14 @@ router.get('/', async (req, res) => {
         // Build filter object
         const filter = {};
         if (search) {
-            filter.$text = { $search: search };
+            // Create a regex pattern for more flexible search
+            const searchRegex = new RegExp(search.split(' ').join('|'), 'i');
+            filter.$or = [
+                { name: { $regex: searchRegex } },
+                { description: { $regex: searchRegex } },
+                { category: { $regex: searchRegex } },
+                { brand: { $regex: searchRegex } }
+            ];
         }
         if (brand) {
             filter.brand = brand;
@@ -134,4 +141,4 @@ router.get('/metadata/categories', async (req, res) => {
     }
 });
 
-module.exports = router; 
+module.exports = router;
