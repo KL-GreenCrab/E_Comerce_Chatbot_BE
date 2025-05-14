@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test Chatbot API</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+      async function testFetch() {
+        const messageInput = document.getElementById("message");
+        const resultDiv = document.getElementById("result");
+        const logsDiv = document.getElementById("logs");
+
+        logsDiv.innerHTML += `<p>Sending message using fetch: ${messageInput.value}</p>`;
+
+        try {
+          const response = await fetch(
+            "http://localhost:5000/api/chatbot/message",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ message: messageInput.value }),
+            }
+          );
+
+          logsDiv.innerHTML += `<p>Fetch response status: ${response.status}</p>`;
+
+          const data = await response.json();
+          logsDiv.innerHTML += `<p>Fetch response data received</p>`;
+          resultDiv.innerHTML = `<h3>Fetch Result:</h3><pre>${JSON.stringify(
+            data,
+            null,
+            2
+          )}</pre>`;
+        } catch (error) {
+          logsDiv.innerHTML += `<p style="color: red;">Fetch error: ${error.message}</p>`;
+          resultDiv.innerHTML = `<h3>Fetch Error:</h3><p style="color: red;">${error.message}</p>`;
+          console.error("Fetch error:", error);
+        }
+      }
+
+      async function testAxios() {
+        const messageInput = document.getElementById("message");
+        const resultDiv = document.getElementById("result");
+        const logsDiv = document.getElementById("logs");
+
+        logsDiv.innerHTML += `<p>Sending message using axios: ${messageInput.value}</p>`;
+
+        try {
+          const response = await axios.post(
+            "http://localhost:5000/api/chatbot/message",
+            {
+              message: messageInput.value,
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
+
+          logsDiv.innerHTML += `<p>Axios response status: ${response.status}</p>`;
+          logsDiv.innerHTML += `<p>Axios response data received</p>`;
+          resultDiv.innerHTML = `<h3>Axios Result:</h3><pre>${JSON.stringify(
+            response.data,
+            null,
+            2
+          )}</pre>`;
+        } catch (error) {
+          logsDiv.innerHTML += `<p style="color: red;">Axios error: ${error.message}</p>`;
+          if (error.response) {
+            logsDiv.innerHTML += `<p style="color: red;">Status: ${error.response.status}</p>`;
+            logsDiv.innerHTML += `<p style="color: red;">Data: ${JSON.stringify(
+              error.response.data
+            )}</p>`;
+          }
+          resultDiv.innerHTML = `<h3>Axios Error:</h3><p style="color: red;">${error.message}</p>`;
+          console.error("Axios error:", error);
+        }
+      }
+
+      function clearLogs() {
+        document.getElementById("logs").innerHTML = "";
+      }
+    </script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .button-group {
+        margin: 20px 0;
+      }
+      button {
+        padding: 8px 16px;
+        margin-right: 10px;
+      }
+      input {
+        padding: 8px;
+        width: 300px;
+      }
+      #logs {
+        background-color: #f5f5f5;
+        padding: 10px;
+        border-radius: 5px;
+        margin-top: 20px;
+        max-height: 200px;
+        overflow-y: auto;
+      }
+      pre {
+        background-color: #f0f0f0;
+        padding: 10px;
+        border-radius: 5px;
+        overflow-x: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Test Chatbot API</h1>
+    <div>
+      <input
+        type="text"
+        id="message"
+        placeholder="Enter message"
+        value="xin chào"
+      />
+      <div class="button-group">
+        <button onclick="testFetch()">Send with Fetch</button>
+        <button onclick="testAxios()">Send with Axios</button>
+        <button onclick="clearLogs()">Clear Logs</button>
+      </div>
+    </div>
+    <div id="logs" style="margin-top: 20px"></div>
+    <div id="result" style="margin-top: 20px"></div>
+  </body>
+</html>
