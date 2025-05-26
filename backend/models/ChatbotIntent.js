@@ -5,7 +5,17 @@ const chatbotIntentSchema = new mongoose.Schema({
     type: {
         type: String,
         required: true,
-        enum: ['product_search', 'shipping', 'payment', 'return_policy', 'greeting', 'fallback']
+        enum: [
+            'product_search',
+            'category_exploration',
+            'brand_recommendation',
+            'price_range_recommendation',
+            'shipping',
+            'payment',
+            'return_policy',
+            'greeting',
+            'fallback'
+        ]
     },
     // Các từ khóa hoặc mẫu câu để nhận diện ý định
     patterns: {
@@ -19,6 +29,16 @@ const chatbotIntentSchema = new mongoose.Schema({
     },
     // Có cần truy vấn sản phẩm không
     requiresProductQuery: {
+        type: Boolean,
+        default: false
+    },
+    // Có cần truy vấn thương hiệu theo danh mục không
+    requiresCategoryBrands: {
+        type: Boolean,
+        default: false
+    },
+    // Có cần truy vấn theo khoảng giá không
+    requiresPriceRange: {
         type: Boolean,
         default: false
     }

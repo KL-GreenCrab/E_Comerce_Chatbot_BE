@@ -6,9 +6,9 @@ const intents = [
             'bắt đầu', 'giúp tôi', 'tôi cần giúp đỡ'
         ],
         responses: [
-            'Xin chào! Tôi có thể giúp gì cho bạn?',
-            'Chào bạn! Bạn đang tìm kiếm sản phẩm nào?',
-            'Xin chào! Tôi là trợ lý ảo của cửa hàng. Tôi có thể giúp bạn tìm sản phẩm, kiểm tra đơn hàng hoặc trả lời các câu hỏi về chính sách của chúng tôi.'
+            'Xin chào! Tôi có thể giúp gì cho bạn? Bạn có thể hỏi tôi về các loại sản phẩm, thương hiệu hoặc tầm giá.',
+            'Chào bạn! Bạn đang tìm kiếm sản phẩm nào? Tôi có thể tư vấn về thương hiệu và giá cả.',
+            'Xin chào! Tôi là trợ lý ảo của cửa hàng. Tôi có thể giúp bạn tìm sản phẩm theo loại, thương hiệu hoặc tầm giá, cũng như trả lời các câu hỏi về chính sách của chúng tôi.'
         ],
         requiresProductQuery: false
     },
@@ -25,6 +25,127 @@ const intents = [
             'Dựa trên yêu cầu của bạn, đây là các sản phẩm phù hợp:'
         ],
         requiresProductQuery: true
+    },
+    {
+        type: 'category_exploration',
+        patterns: [
+            // Câu hỏi chung về sản phẩm
+            'loại sản phẩm', 'danh mục', 'các loại', 'có những loại nào',
+            'sản phẩm gì', 'có bán gì', 'có những sản phẩm nào',
+            'có gì', 'bán gì', 'có những gì',
+
+            // Điện thoại - Smartphones
+            'smartphone', 'điện thoại', 'phone', 'mobile', 'di động',
+            'điện thoại di động', 'smart phone', 'đt', 'fone',
+            'có điện thoại gì', 'có phone nào', 'có smartphone nào',
+            'điện thoại nào', 'phone nào', 'smartphone nào',
+            'loại điện thoại', 'các loại điện thoại', 'dòng điện thoại',
+
+            // Laptop - Máy tính
+            'laptop', 'máy tính', 'computer', 'pc', 'notebook',
+            'máy tính xách tay', 'máy tính laptop', 'lap top', 'mt',
+            'có laptop gì', 'có máy tính nào', 'có computer nào',
+            'laptop nào', 'máy tính nào', 'computer nào',
+            'loại laptop', 'các loại laptop', 'dòng laptop',
+            'loại máy tính', 'các loại máy tính', 'dòng máy tính',
+
+            // Tablet - Máy tính bảng
+            'tablet', 'máy tính bảng', 'ipad', 'tab', 'surface',
+            'có tablet gì', 'có máy tính bảng nào', 'có ipad nào',
+            'tablet nào', 'máy tính bảng nào', 'ipad nào',
+            'loại tablet', 'các loại tablet', 'dòng tablet',
+
+            // Phụ kiện - Accessories
+            'phụ kiện', 'accessories', 'tai nghe', 'headphone', 'earphone',
+            'có phụ kiện gì', 'có tai nghe nào', 'có headphone nào',
+            'phụ kiện nào', 'tai nghe nào', 'headphone nào',
+            'loại phụ kiện', 'các loại phụ kiện', 'dòng phụ kiện'
+        ],
+        responses: [
+            'Trong danh mục này, chúng tôi có các thương hiệu sau:',
+            'Đây là các thương hiệu phổ biến trong danh mục bạn quan tâm:',
+            'Chúng tôi có các thương hiệu sau đây trong danh mục này:'
+        ],
+        requiresProductQuery: true,
+        requiresCategoryBrands: true
+    },
+    {
+        type: 'brand_recommendation',
+        patterns: [
+            // Câu hỏi về thương hiệu
+            'thương hiệu', 'hãng', 'nhãn hàng', 'brand', 'hiệu', 'của hãng nào',
+            'hãng nào', 'thương hiệu nào', 'brand nào', 'hiệu nào',
+            'có hãng gì', 'có thương hiệu gì', 'có brand nào',
+
+            // Smartphone brands
+            'apple', 'iphone', 'samsung', 'galaxy', 'xiaomi', 'redmi', 'mi',
+            'oppo', 'vivo', 'nokia', 'huawei', 'honor', 'realme', 'oneplus',
+            'google', 'pixel', 'nothing', 'asus', 'rog phone',
+
+            // Laptop brands
+            'dell', 'hp', 'asus', 'acer', 'lenovo', 'thinkpad', 'msi',
+            'gigabyte', 'macbook', 'surface', 'razer', 'alienware',
+            'gaming laptop', 'laptop gaming',
+
+            // Accessory brands
+            'jbl', 'bose', 'sony', 'sennheiser', 'logitech', 'razer',
+            'airpods', 'beats', 'skullcandy', 'audio technica',
+
+            // Câu hỏi cụ thể về thương hiệu
+            'có sản phẩm apple', 'có sản phẩm samsung', 'có sản phẩm xiaomi',
+            'có điện thoại apple', 'có điện thoại samsung', 'có điện thoại xiaomi',
+            'có laptop dell', 'có laptop hp', 'có laptop asus',
+            'sản phẩm của apple', 'sản phẩm của samsung', 'sản phẩm của xiaomi'
+        ],
+        responses: [
+            'Đây là một số sản phẩm từ thương hiệu bạn quan tâm:',
+            'Tôi đã tìm thấy những sản phẩm sau từ thương hiệu này:',
+            'Chúng tôi có các sản phẩm sau đây từ thương hiệu bạn yêu cầu:'
+        ],
+        requiresProductQuery: true
+    },
+    {
+        type: 'price_range_recommendation',
+        patterns: [
+            // Câu hỏi về giá
+            'giá', 'tầm giá', 'khoảng giá', 'bao nhiêu tiền', 'giá bao nhiêu',
+            'giá cả', 'chi phí', 'cost', 'price', 'budget',
+            'trong tầm', 'phù hợp với túi tiền', 'có thể mua được',
+
+            // Mô tả giá
+            'rẻ', 'đắt', 'mắc', 'giá rẻ', 'giá tốt', 'giảm giá', 'khuyến mãi',
+            'bình dân', 'cao cấp', 'sang trọng', 'tiết kiệm', 'hợp lý',
+            'phải chăng', 'vừa túi tiền', 'không quá đắt', 'không quá mắc',
+
+            // Khoảng giá cụ thể (USD)
+            'dưới', 'trên', 'khoảng', 'từ', 'đến', 'trong khoảng',
+            'dưới 500 usd', 'dưới 1000 usd', 'dưới 1500 usd', 'dưới 2000 usd',
+            'trên 500 usd', 'trên 1000 usd', 'trên 1500 usd', 'trên 2000 usd',
+            'từ 500 đến 1000 usd', 'từ 1000 đến 2000 usd', 'từ 2000 đến 3000 usd',
+            'khoảng 500 usd', 'khoảng 1000 usd', 'khoảng 1500 usd', 'khoảng 2000 usd',
+
+            // Legacy Vietnamese patterns
+            'dưới 5 triệu', 'dưới 10 triệu', 'dưới 15 triệu', 'dưới 20 triệu',
+            'trên 5 triệu', 'trên 10 triệu', 'trên 15 triệu', 'trên 20 triệu',
+            'từ 5 đến 10 triệu', 'từ 10 đến 15 triệu', 'từ 15 đến 20 triệu',
+
+            // Số tiền (USD)
+            '200', '300', '400', '500', '600', '700', '800', '900', '1000', '1500', '2000', '2500', '3000',
+            '$200', '$300', '$400', '$500', '$600', '$700', '$800', '$900', '$1000', '$1500', '$2000',
+            'usd', '$',
+
+            // Câu hỏi cụ thể về giá
+            'có sản phẩm rẻ không', 'có gì rẻ không', 'có gì giá tốt không',
+            'sản phẩm giá rẻ', 'sản phẩm bình dân', 'sản phẩm cao cấp',
+            'trong tầm giá sinh viên', 'phù hợp với học sinh', 'cho người mới bắt đầu'
+        ],
+        responses: [
+            'Đây là một số sản phẩm trong tầm giá bạn quan tâm:',
+            'Tôi đã tìm thấy những sản phẩm sau trong tầm giá này:',
+            'Trong tầm giá bạn yêu cầu, chúng tôi có các sản phẩm sau:'
+        ],
+        requiresProductQuery: true,
+        requiresPriceRange: true
     },
     {
         type: 'shipping',
@@ -72,9 +193,9 @@ const intents = [
         type: 'fallback',
         patterns: [],
         responses: [
-            'Xin lỗi, tôi không hiểu ý của bạn. Bạn có thể diễn đạt lại được không?',
-            'Tôi chưa được lập trình để hiểu câu hỏi này. Bạn có thể hỏi về sản phẩm, vận chuyển, thanh toán hoặc chính sách đổi trả.',
-            'Tôi không chắc mình hiểu đúng ý bạn. Bạn có thể hỏi theo cách khác được không?'
+            'Xin lỗi, tôi không hiểu ý của bạn. Bạn có thể diễn đạt lại được không? Bạn có thể hỏi tôi về các loại sản phẩm, thương hiệu hoặc tầm giá.',
+            'Tôi chưa được lập trình để hiểu câu hỏi này. Bạn có thể hỏi về sản phẩm, thương hiệu, tầm giá, vận chuyển, thanh toán hoặc chính sách đổi trả.',
+            'Tôi không chắc mình hiểu đúng ý bạn. Bạn có thể hỏi theo cách khác được không? Ví dụ: "Có những loại điện thoại nào?", "Có sản phẩm nào của Apple không?", hoặc "Có laptop nào dưới 15 triệu không?"'
         ],
         requiresProductQuery: false
     }
