@@ -148,6 +148,50 @@ const intents = [
         requiresPriceRange: true
     },
     {
+        type: 'product_consultation',
+        patterns: [
+            // Câu hỏi tư vấn sản phẩm
+            'tư vấn', 'tư vấn sản phẩm', 'tư vấn về', 'cho tôi biết về',
+            'thông tin về', 'mô tả', 'mô tả sản phẩm', 'chi tiết sản phẩm',
+            'thông số', 'thông số kỹ thuật', 'cấu hình', 'đánh giá',
+            'review', 'đánh giá sản phẩm', 'có tốt không', 'có nên mua không',
+
+            // Tên sản phẩm cụ thể
+            'iphone', 'iphone 15', 'iphone 15 pro', 'iphone 15 pro max',
+            'samsung galaxy', 'galaxy s24', 's24 ultra', 'samsung s24',
+            'macbook', 'macbook pro', 'macbook air', 'macbook pro 16',
+            'dell xps', 'xps 15', 'dell xps 15', 'dell laptop',
+            'hp spectre', 'spectre x360', 'hp laptop', 'hp spectre x360',
+            'lenovo thinkpad', 'thinkpad', 'thinkpad x1', 'x1 carbon',
+            'asus rog', 'rog zephyrus', 'zephyrus g14', 'asus laptop',
+            'ipad', 'ipad pro', 'ipad pro 12.9', 'apple tablet',
+            'surface', 'surface pro', 'surface pro 9', 'microsoft surface',
+            'galaxy tab', 'tab s9', 's9 ultra', 'samsung tablet',
+            'sony wh-1000xm5', 'sony headphone', 'wh-1000xm5', 'sony tai nghe',
+            'bose quietcomfort', 'bose headphone', 'quietcomfort ultra',
+            'airpods', 'airpods pro', 'apple airpods', 'tai nghe apple',
+
+            // Câu hỏi về sản phẩm cụ thể
+            'iphone 15 pro max có gì đặc biệt', 'macbook pro có tốt không',
+            'samsung galaxy s24 ultra thế nào', 'dell xps 15 có nên mua',
+            'thông số iphone 15', 'cấu hình macbook pro', 'đánh giá samsung s24',
+            'sony wh-1000xm5 có tốt không', 'airpods pro 2 thế nào',
+            'ipad pro 12.9 có đáng mua', 'surface pro 9 như thế nào',
+
+            // Từ khóa tư vấn chung
+            'nên chọn', 'lựa chọn nào', 'sản phẩm nào tốt', 'có đáng mua',
+            'có nên mua', 'ưu nhược điểm', 'điểm mạnh', 'điểm yếu',
+            'so sánh', 'khác biệt', 'phân biệt', 'lựa chọn'
+        ],
+        responses: [
+            'Đây là thông tin chi tiết về sản phẩm bạn quan tâm:',
+            'Tôi sẽ cung cấp thông tin tư vấn về sản phẩm này:',
+            'Dưới đây là mô tả và thông số kỹ thuật của sản phẩm:'
+        ],
+        requiresProductQuery: true,
+        requiresProductConsultation: true
+    },
+    {
         type: 'shipping',
         patterns: [
             'vận chuyển', 'giao hàng', 'ship', 'thời gian giao',

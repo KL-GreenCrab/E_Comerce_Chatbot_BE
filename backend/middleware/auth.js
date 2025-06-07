@@ -9,24 +9,20 @@ exports.auth = (req, res, next) => {
             console.error('Auth error: No Authorization header provided');
             return res.status(401).json({ message: 'Vui lòng đăng nhập' });
         }
-
         // Extract token
         const token = authHeader.replace('Bearer ', '');
         if (!token) {
             console.error('Auth error: Empty token');
             return res.status(401).json({ message: 'Token không hợp lệ' });
         }
-
         // Verify token
         try {
             const decoded = jwt.verify(token, config.jwtSecret);
-
             // Check if decoded contains userId
             if (!decoded.userId) {
                 console.error('Auth error: Token does not contain userId', decoded);
                 return res.status(401).json({ message: 'Token không hợp lệ (thiếu userId)' });
             }
-
             // Set user object with _id for compatibility with existing code
             req.user = {
                 ...decoded,

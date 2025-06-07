@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo Tư Vấn Sản Phẩm Chatbot</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fafafa;
+        }
+        .test-message {
+            background: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 20px;
+            margin-bottom: 15px;
+            display: inline-block;
+        }
+        .response {
+            background: #f8f9fa;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .product-info {
+            background: #e3f2fd;
+            border: 1px solid #2196f3;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .specs {
+            background: #fff3e0;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .loading {
+            color: #666;
+            font-style: italic;
+        }
+        .error {
+            color: #dc3545;
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 Demo Tư Vấn Sản Phẩm Chatbot</h1>
+        
+        <div class="test-section">
+            <h3>Các câu hỏi mẫu:</h3>
+            <button onclick="testMessage('Tư vấn về iPhone 15 Pro Max')">Tư vấn về iPhone 15 Pro Max</button>
+            <button onclick="testMessage('Cho tôi biết thông tin về Samsung Galaxy S24 Ultra')">Thông tin Samsung Galaxy S24 Ultra</button>
+            <button onclick="testMessage('Mô tả chi tiết Dell XPS 15')">Mô tả Dell XPS 15</button>
+            <button onclick="testMessage('Sony WH-1000XM5 có tốt không?')">Sony WH-1000XM5 có tốt không?</button>
+            <button onclick="testMessage('Thông số kỹ thuật iPad Pro 12.9')">Thông số iPad Pro 12.9</button>
+        </div>
+
+        <div class="test-section">
+            <h3>Tự nhập câu hỏi:</h3>
+            <input type="text" id="customMessage" placeholder="Nhập câu hỏi tư vấn..." style="width: 70%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+            <button onclick="testCustomMessage()">Gửi</button>
+        </div>
+
+        <div id="results"></div>
+    </div>
+
+    <script>
+        async function testMessage(message) {
+            const resultsDiv = document.getElementById('results');
+            
+            // Add user message
+            resultsDiv.innerHTML += `
+                <div class="test-section">
+                    <div class="test-message">${message}</div>
+                    <div class="loading">Đang xử lý...</div>
+                </div>
+            `;
+            
+            try {
+                const response = await fetch('http://localhost:5000/api/chatbot/test-mock', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ message: message })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                
+                // Remove loading message
+                const lastSection = resultsDiv.lastElementChild;
+                lastSection.querySelector('.loading').remove();
+                
+                // Add response
+                let responseHtml = `
+                    <div class="response">
+                        <strong>Intent:</strong> ${result.intent}<br>
+                        <strong>Response:</strong><br>
+                        ${result.text.replace(/\n/g, '<br>')}
+                    </div>
+                `;
+                
+                if (result.product) {
+                    responseHtml += `
+                        <div class="product-info">
+                            <h4>📱 ${result.product.name}</h4>
+                            <p><strong>💰 Giá:</strong> $${result.product.price}</p>
+                            <p><strong>⭐ Đánh giá:</strong> ${result.product.rating}/5 (${result.product.reviews} đánh giá)</p>
+                            <p><strong>📦 Tồn kho:</strong> ${result.product.stock} sản phẩm</p>
+                            <p><strong>🏷️ Thương hiệu:</strong> ${result.product.brand}</p>
+                            <p><strong>📂 Danh mục:</strong> ${result.product.category}</p>
+                        </div>
+                    `;
+                    
+                    if (result.product.specifications) {
+                        responseHtml += `
+                            <div class="specs">
+                                <h5>🔧 Thông số kỹ thuật:</h5>
+                                ${Object.entries(result.product.specifications).map(([key, value]) => 
+                                    `<p><strong>${key}:</strong> ${value}</p>`
+                                ).join('')}
+                            </div>
+                        `;
+                    }
+                }
+                
+                lastSection.innerHTML += responseHtml;
+                
+            } catch (error) {
+                // Remove loading message
+                const lastSection = resultsDiv.lastElementChild;
+                lastSection.querySelector('.loading').remove();
+                
+                lastSection.innerHTML += `
+                    <div class="error">
+                        <strong>Lỗi:</strong> ${error.message}<br>
+                        Vui lòng kiểm tra xem server có đang chạy trên port 5000 không.
+                    </div>
+                `;
+            }
+            
+            // Scroll to bottom
+            resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        }
+
+        function testCustomMessage() {
+            const input = document.getElementById('customMessage');
+            const message = input.value.trim();
+            if (message) {
+                testMessage(message);
+                input.value = '';
+            }
+        }
+
+        // Allow Enter key to send message
+        document.getElementById('customMessage').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                testCustomMessage();
+            }
+        });
+    </script>
+</body>
+</html>

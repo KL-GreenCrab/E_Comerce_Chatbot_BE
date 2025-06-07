@@ -10,6 +10,7 @@ const chatbotIntentSchema = new mongoose.Schema({
             'category_exploration',
             'brand_recommendation',
             'price_range_recommendation',
+            'product_consultation',
             'shipping',
             'payment',
             'return_policy',
@@ -39,6 +40,11 @@ const chatbotIntentSchema = new mongoose.Schema({
     },
     // Có cần truy vấn theo khoảng giá không
     requiresPriceRange: {
+        type: Boolean,
+        default: false
+    },
+    // Có cần tư vấn sản phẩm cụ thể không
+    requiresProductConsultation: {
         type: Boolean,
         default: false
     }
